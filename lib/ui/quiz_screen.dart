@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quiz/models/questions.dart';
 
 class QuizScreenPage extends StatefulWidget {
   const QuizScreenPage({Key? key}) : super(key: key);
@@ -8,10 +9,15 @@ class QuizScreenPage extends StatefulWidget {
 }
 
 class _QuizScreenPageState extends State<QuizScreenPage> {
-  String? _question = '';
+  final List<Question> _questions = Question.questionList;
+  Question? _question;
   String? _groupValue = 'A';
+  int _index = 0;
+  bool _isCorrect = false;
+  int _score = 0;
   @override
   Widget build(BuildContext context) {
+    _question = _questions[_index];
     return Scaffold(
       // gradient background
       backgroundColor: const Color.fromARGB(255, 35, 100, 153),
@@ -25,23 +31,141 @@ class _QuizScreenPageState extends State<QuizScreenPage> {
           },
         ),
         title: const Text("Quiz Math"),
+        actions: [
+          Row(
+            children: [
+              RichText(
+                text: TextSpan(
+                  text: 'Score: ',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20.0,
+                  ),
+                ),
+              ),
+              RichText(
+                text: TextSpan(
+                  text: '$_score',
+                  style: TextStyle(
+                    color: Color.fromARGB(255, 255, 208, 0),
+                    fontSize: 26.0,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10.0),
+            ],
+          ),
+        ],
         backgroundColor: const Color.fromARGB(255, 35, 100, 153),
       ),
-      body: Column(
-        children: [
-          _buildQuestionContainer(context),
-          _buildDescription("images/images.jpeg"),
-          _buildOptions(option: 'This Man is disabled'),
-          _buildOptions(option: 'This Man is sitting alone'),
-          _buildOptions(option: 'The wheelchair has four wheels'),
-          const SizedBox(height: 8),
-          _buildValidateBotton(context),
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            _buildQuestionContainer(context, _question!.question),
+            // const SizedBox(height: 10.0),
+            _buildDescription("images/images.jpeg"),
+            Container(
+              height: 54,
+              width: double.infinity,
+              margin: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: const Color.fromARGB(255, 7, 29, 46),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: const Color.fromARGB(255, 255, 255, 255),
+                  width: 0.5,
+                ),
+              ),
+              child: RadioListTile<String?>(
+                title: Text(_question!.answers![0]),
+                value: (_question!.answers![0]),
+                groupValue: _groupValue,
+                onChanged: (String? value) {
+                  setState(() {
+                    _groupValue = value;
+                  });
+                },
+              ),
+            ),
+            Container(
+              height: 54,
+              width: double.infinity,
+              margin: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: const Color.fromARGB(255, 7, 29, 46),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: const Color.fromARGB(255, 255, 255, 255),
+                  width: 0.5,
+                ),
+              ),
+              child: RadioListTile<String?>(
+                title: Text(_question!.answers![1]),
+                value: (_question!.answers![1]),
+                groupValue: _groupValue,
+                onChanged: (String? value) {
+                  setState(() {
+                    _groupValue = value;
+                  });
+                },
+              ),
+            ),
+            Container(
+              height: 54,
+              width: double.infinity,
+              margin: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: const Color.fromARGB(255, 7, 29, 46),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: const Color.fromARGB(255, 255, 255, 255),
+                  width: 0.5,
+                ),
+              ),
+              child: RadioListTile<String?>(
+                title: Text(_question!.answers![2]),
+                value: (_question!.answers![2]),
+                groupValue: _groupValue,
+                onChanged: (String? value) {
+                  setState(() {
+                    _groupValue = value;
+                  });
+                },
+              ),
+            ),
+            Container(
+              height: 54,
+              width: double.infinity,
+              margin: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: const Color.fromARGB(255, 7, 29, 46),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: const Color.fromARGB(255, 255, 255, 255),
+                  width: 0.5,
+                ),
+              ),
+              child: RadioListTile<String?>(
+                title: Text(_question!.answers![3]),
+                value: (_question!.answers![3]),
+                groupValue: _groupValue,
+                onChanged: (String? value) {
+                  setState(() {
+                    _groupValue = value;
+                  });
+                },
+              ),
+            ),
+            //const SizedBox(height: 10),
+            _buildValidateBotton(context),
+          ],
+        ),
       ),
     );
   }
 
-  Container _buildQuestionContainer(BuildContext context) {
+  Container _buildQuestionContainer(
+      BuildContext context, String? questionTitle) {
     return Container(
       height: 90,
       width: double.infinity,
@@ -57,8 +181,11 @@ class _QuizScreenPageState extends State<QuizScreenPage> {
       child: Center(
         // padding: const EdgeInsets.all(8.0),
         child: Text(
-          "Select the correct answer to the question",
-          style: Theme.of(context).textTheme.bodyMedium,
+          "${_question!.question}??''",
+          style: Theme.of(context)
+              .textTheme
+              .headline6!
+              .copyWith(color: Color.fromARGB(255, 248, 101, 101)),
         ),
       ),
     );
@@ -66,7 +193,7 @@ class _QuizScreenPageState extends State<QuizScreenPage> {
 
   Container _buildDescription(String image) {
     return Container(
-      height: 200,
+      height: 180,
       width: double.infinity,
       margin: const EdgeInsets.all(10),
       decoration: BoxDecoration(
@@ -89,41 +216,72 @@ class _QuizScreenPageState extends State<QuizScreenPage> {
       padding: const EdgeInsets.all(8.0),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-            primary: Color.fromARGB(255, 248, 111, 111),
+            primary: const Color.fromARGB(255, 28, 168, 168),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(4),
+              borderRadius: BorderRadius.circular(15),
             ),
             fixedSize: Size(MediaQuery.of(context).size.width - 20, 50)),
-        onPressed: () {},
-        child: const Icon(
-          Icons.check,
-          size: 40,
+        onPressed: () => _validateAnswer(_groupValue!),
+        child: Text(
+          'Ok',
+          style: Theme.of(context).textTheme.headline6!.copyWith(
+                color: _isCorrect ? Colors.green : Colors.white,
+              ),
         ),
       ),
     );
   }
 
-  Container _buildOptions({
-    String option = '',
-  }) {
-    return Container(
-      height: 60,
-      width: double.infinity,
-      margin: const EdgeInsets.all(6),
-      decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 7, 29, 46),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: const Color.fromARGB(255, 255, 255, 255),
-          width: 0.5,
-        ),
-      ),
-      child: RadioListTile<String?>(
-        title: Text(option),
-        value: _question,
-        groupValue: 'A',
-        onChanged: (String? value) {},
-      ),
+  void _validateAnswer(String answer) {
+    if (answer.trim() == _question!.correctAnswer!.trim()) {
+      setState(() {
+        _isCorrect = true;
+        if (_index < _questions.length - 1) {
+          _index++;
+          _score++;
+        } else {
+          _index = 0;
+        }
+
+        _isCorrect = false;
+      });
+    } else {
+      setState(() {
+        _isCorrect = false;
+        if (_index < _questions.length - 1) {
+          _index++;
+          //_score++;
+        } else {
+          alertDialog();
+        }
+      });
+      //_result = 'Incorrect';
+    }
+    // _index++;
+  }
+
+  void alertDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Result'),
+          content: Text('Your score is $_score'),
+          actions: <Widget>[
+            ElevatedButton(
+              child: const Text('Sure'),
+              onPressed: () {
+                setState(() {
+                  _index = 0;
+                  _score = 0;
+                });
+
+                Navigator.of(context).pop();
+              },
+            )
+          ],
+        );
+      },
     );
   }
 }
